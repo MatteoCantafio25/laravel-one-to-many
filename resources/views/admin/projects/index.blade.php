@@ -15,6 +15,7 @@
             <th scope="col">#</th>
             <th scope="col">Title</th>
             <th scope="col">Slug</th>
+            <th scope="col">Type</th>
             <th scope="col">Created at</th>
             <th scope="col">Updated at</th>
             <th>
@@ -33,6 +34,13 @@
               <th scope="row">{{$project->id}}</th>
               <td>{{$project->title}}</td>
               <td>{{$project->slug}}</td>
+              <td>
+                @if($project->type)
+                    <span class="badge" style="background-color: {{$project->type->color}}">{{$project->type->label}}</span>
+                @else
+                    None 
+                @endif
+              </td>
               <td>{{$project->created_at}}</td>
               <td>{{$project->updated_at}}</td>
               <td>
@@ -58,17 +66,42 @@
                 
             @empty
                 <tr>
-                    <td colspan="6">
+                    <td colspan="7">
                         <h3 class="text-center">Non ci sono post</h3>
                     </td>
                 </tr>
             @endforelse
         </tbody>
-      </table>
+    </table>
 
-      @if ($projects->hasPages())
-          {{$projects->links()}}
-      @endif
+    <!-- Paginazione -->
+    @if ($projects->hasPages())
+        {{$projects->links()}}
+    @endif
+
+    <!-- Sezione per vedere quanti projects ci sono per ogni categoria -->
+    <section class="my-3" id="types-projects">
+        <hr class="my-3">
+        <h3>Project for each type</h3>
+        <div class="row row-cols-3">
+            @foreach ($types as $type)
+                <div class="col">
+                    <h4 class="my-3">{{$type->label}} ({{$type->projects_count}})</h4>
+                    
+                    @forelse ($type->projects as $project)
+                        <div>
+                            <a href="{{route('admin.projects.show', $project->id)}}" class="text-decoration-none">{{$project->title}}</a>
+                        </div>
+                    @empty
+                        <p class="mb-0">There are no projects for this type</p>
+                    @endforelse
+
+                </div>
+            @endforeach
+        </div>
+    </section>
+
+
 @endsection
 
 @section('scripts')

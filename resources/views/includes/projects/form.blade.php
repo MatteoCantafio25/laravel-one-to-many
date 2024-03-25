@@ -24,7 +24,23 @@
                 <input type="text" name="slug" class="form-control" id="slug" value="{{Str::slug(old('title', $project->title))}}" disabled>
             </div>
         </div>
-        <div class="col-11">
+        <div class="col-6">
+            <div class="mb-3">
+                <label for="type_id" class="form-label">Select a type</label>
+                <select name="type_id" id="type_id" class="form-select @error('type_id') is-invalid @elseif(old('type_id', '')) is-valid @enderror">
+                    <option value="">None</option>
+                    @foreach ($types as $type)
+                        <option value="{{$type->id}}" @if(old('type_id', $project->type?->id) == $type->id) selected @endif >{{$type->label}}</option>
+                    @endforeach
+                </select>
+                @error('type_id')
+                    <div class="invalid-feedback">
+                        {{$message}}
+                    </div>
+                @enderror
+            </div>
+        </div>
+        <div class="col-5">
             <div class="mb-3">
                 <label for="image" class="form-label">Image</label>
                 <!-- Input Change image -->

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\Project;
+use App\Models\Type;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Str;
@@ -17,8 +18,11 @@ class ProjectController extends Controller
      */
     public function index()
     {
+        $types = Type::withCount('projects')->get();      
+
         $projects = Project::orderByDesc('updated_at')->orderByDesc('created_at')->paginate(10);
-        return view('admin.projects.index', compact('projects'));
+
+        return view('admin.projects.index', compact('projects', 'types'));
     }
 
     /**
@@ -28,7 +32,9 @@ class ProjectController extends Controller
     {
         $project = new Project();
 
-        return view('admin.projects.create', compact('project'));
+        $types = Type::select('label', 'id')->get();
+
+        return view('admin.projects.create', compact('project', 'types'));
     }
 
     /**
@@ -41,6 +47,7 @@ class ProjectController extends Controller
             'title' => 'required|string|min:5|max:50|unique:projects',
             'content' => 'required|string|',
             'image' => 'nullable|image|mimes:png,jpg,jpeg',
+            'type_id' => 'nullable|exists:types,id',
         ], 
         [
             'title.required' => 'Title field is required',
@@ -50,6 +57,7 @@ class ProjectController extends Controller
             'title.unique' => 'There cannot be two projects with the same title',
             'image.image' => 'The inserted file is not an image',
             'image.mimes' => 'Valid extensions: .png .jpg .jpeg',
+            'type_id.exists' => 'Type not valid',
         ]);
 
         $data = $request->all();
@@ -86,7 +94,9 @@ class ProjectController extends Controller
      */
     public function edit(Project $project)
     {
-        return view('admin.projects.edit', compact('project'));
+        $types = Type::select('label', 'id')->get();
+
+        return view('admin.projects.edit', compact('project', 'types'));
     }
 
     /**
@@ -99,6 +109,7 @@ class ProjectController extends Controller
             'title' => ['required', 'string', 'min:5', 'max:50', Rule::unique('projects')->ignore($project->id)],
             'content' => 'required|string|',
             'image' => 'nullable|image|mimes:png,jpg,jpeg',
+            'type_id' => 'nullable|exists:types,id',
         ], 
         [
             'title.required' => 'Title field is required',
@@ -108,6 +119,7 @@ class ProjectController extends Controller
             'title.unique' => 'There cannot be two projects with the same title',
             'image.image' => 'The inserted file is not an image',
             'image.mimes' => 'Valid extensions: .png .jpg .jpeg',
+            'type_id.exists' => 'Type not valid',
         ]);
 
         $data = $request->all();

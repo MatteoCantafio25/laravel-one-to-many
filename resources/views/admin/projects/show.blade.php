@@ -4,7 +4,13 @@
 
 @section('content')
     <header>
-        <h1 class="my-5">{{$project->title}}</h1>
+        <h1 class="mt-4 mb-1">{{$project->title}}</h1>
+        <p>Type: @if($project->type)
+             <span class="badge" style="background-color: {{$project->type->color}}">{{$project->type->label}}</span>
+            @else
+             None 
+            @endif
+        </p>
     </header>
 
     <hr>

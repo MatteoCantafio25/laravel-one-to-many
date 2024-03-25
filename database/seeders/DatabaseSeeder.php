@@ -20,8 +20,9 @@ class DatabaseSeeder extends Seeder
             'email' => 'matteo@ciao.it',
         ]);
         
+        $this->call(TypeSeeder::class);
+        
         \App\Models\Project::factory(10)->create();
 
-        $this->call(TypeSeeder::class);
     }
 }

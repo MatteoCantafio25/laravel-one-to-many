@@ -11,9 +11,13 @@ class Project extends Model
     use HasFactory;
     use softDeletes;
 
-    protected $fillable = ['title', 'content'];
+    protected $fillable = ['title', 'content', 'type_id'];
 
     public function printImage(){
         return asset('storage/' . $this->image);
+    }
+
+    public function type(){
+        return $this->belongsTo(Type::class);
     }
 }
